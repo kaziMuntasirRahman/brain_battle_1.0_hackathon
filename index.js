@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
+const connectDB = require('./db/mongoClient')
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -9,38 +10,41 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('Hello from the server side')
+app.get('/', (_, res) => {
+  res.send('Hello from the server side...')
 })
 
-const { MongoClient, ServerApiVersion } = require('mongodb')
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xo6ux.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+// check if mongodb establishment is successful
+connectDB()
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true
-  }
-})
+// Import Routes
+const healthRoutes = require('./routes/1_Health')
+const examRollRoutes = require('./routes/2_Exam_Room')
+const wifiLoginRoutes = require('./routes/3_Wifi_Login')
+const libraryBooks = require('./routes/4.1_Library_Book')
+const canteenFood = require('./routes/5.Canteen_Food')
+const attendance = require('./routes/6.Class_Attendance')
+const emergencyAlert = require('./routes/7.Emergency_Alert')
+const noticeBoard = require('./routes/8.Notice_Board')
+const createStudentInfo = require('./routes/10.1.Student_Management_System_(Create)')
+const readStudentInfo = require('./routes/10.2.Student_Management_System_(Read)')
+const updateStudentInfo = require('./routes/10.3.Student_Management_System_(Update)')
+const deleteStudentInfo = require('./routes/10.4.Student_Management_System_(Delete)')
 
-async function run () {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect()
-    // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 })
-    console.log(
-      'Pinged your deployment. You successfully connected to MongoDB!'
-    )
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close()
-  }
-}
-run().catch(console.dir)
+// use those routes
+app.use('/api', healthRoutes)
+app.use('/api', examRollRoutes)
+app.use('/api', wifiLoginRoutes)
+app.use('/api', libraryBooks)
+app.use('/api', canteenFood)
+app.use('/api', attendance)
+app.use('/api', emergencyAlert)
+app.use('/api', noticeBoard)
+app.use('/api', createStudentInfo)
+app.use('/api', readStudentInfo)
+app.use('/api', updateStudentInfo)
+app.use('/api', deleteStudentInfo)
 
 app.listen(port, () => {
-  console.log(`This server is running on port: ${port}`)
+  console.log(`This server is running in the port no: ${port}`)
 })
