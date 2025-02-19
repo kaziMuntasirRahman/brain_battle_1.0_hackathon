@@ -13,12 +13,12 @@ router.post('/canteen/order', async (req, res) => {
     const order_id = (await orderCollection.countDocuments()) + 1
     const result = await orderCollection.insertOne({ student_id, items, order_time, order_id, total_price })
     if(result.insertedId){
-      res.send({order_id, status: "Order Placed", total_price}).status(200)
+      res.status(200).send({order_id, status: "Order Placed", total_price})
     }else{
-      res.send({message: "Sorry! Couldn't Place Order."}).status(404)
+      res.status(400).send({message: "Sorry! Couldn't Place Order."})
     }
   } catch (err) {
-    res.send(err.message).status(500)
+    res.status(500).send(err.message)
   }
 })
 

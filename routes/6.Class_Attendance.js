@@ -10,8 +10,8 @@ router.post('/attendance', async (req, res) => {
     const isExistenceClassId = await attendanceCollection.findOne({ class_id })
     if (isExistenceClassId) {
       res
+      .status(400)
         .send({ message: 'Attendance of this class has already been recorded.' })
-        .status(400)
       return
     } else {
       const total_present = present_students.length
@@ -22,11 +22,11 @@ router.post('/attendance', async (req, res) => {
         total_present
       })
       if (result.insertedId) {
-        res.send({ message: 'Attendance Recorded!', total_present }).status(200)
+        res.status(200).send({ message: 'Attendance Recorded!', total_present })
       }
     }
   } catch (err) {
-    res.send(err.message).status(500)
+    res.status(500).send(err.message)
   }
 })
 
